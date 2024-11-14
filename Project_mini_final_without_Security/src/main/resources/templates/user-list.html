@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>User List</title>
+    <style>
+        /* Центрируем таблицу */
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 80%; /* Размер таблицы можно настроить */
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: center; /* Выравнивание текста по центру */
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        /* Если список пустой, можно добавить стиль для текста */
+        .no-users {
+            text-align: center;
+            font-size: 18px;
+            color: #999;
+        }
+
+        /* Стиль для кнопки Menu */
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px auto;
+            display: block;
+            width: 150px;
+            border-radius: 5px;
+        }
+
+        .button:hover {
+            background-color: #45a049;
+        }
+
+        /* Стиль для кнопок действий (View, Delete) */
+        .action-button {
+            padding: 5px 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .view-button {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .view-button:hover {
+            background-color: #45a049;
+        }
+
+        .delete-button {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .delete-button:hover {
+            background-color: #d32f2f;
+        }
+    </style>
+</head>
+<body>
+<h1 style="text-align: center;">User List</h1>
+
+<div th:if="${#lists.isEmpty(users)}" class="no-users">
+    <p>No users found.</p>
+</div>
+
+<!-- Кнопка Menu для возврата на главную страницу -->
+<button class="button" onclick="window.location.href='http://localhost:8080/main_page'">Menu</button>
+
+<table border="1" th:if="${!#lists.isEmpty(users)}">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Username</th>
+        <th>Password</th>
+        <th>Email</th>
+        <th>Create_of</th>
+        <th>Action</th> <!-- Новый столбец для кнопок действий -->
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${users}">
+        <td th:text="${user.user_id}">ID</td> <!-- Используем user.user_id -->
+        <td th:text="${user.username}">Username</td>
+        <td th:text="${user.password}">Password</td>
+        <td th:text="${user.email}">Email</td>
+        <td th:text="${user.create_of}">Create_of</td>
+
+        <td> <!-- Столбец Action -->
+            <form th:action="@{/edit/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+                <button type="submit" class="action-button view-button">Edit</button>
+            </form>
+
+            <form th:action="@{/delete/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+                <button type="submit" class="action-button delete-button">Delete</button>
+            </form>
+        </td>
+
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

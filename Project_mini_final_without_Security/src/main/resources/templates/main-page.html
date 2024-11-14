@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        .button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 15px 32px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 5px;
+            width: 200px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Кнопка для перехода на страницу пользователей -->
+    <button class="button" onclick="window.location.href='http://localhost:8080/users/show'">Users</button>
+
+    <!-- Кнопка для перехода на страницу задач с передачей user_id -->
+    <button class="button" onclick="window.location.href='http://localhost:8080/tasks'">Tasks</button>
+<!--    <button class="button" onclick="window.location.href='/tasks'">Tasks</button>-->
+
+
+    <!-- Кнопка для перехода на страницу категорий -->
+    <button class="button" onclick="window.location.href='http://localhost:8080/categories'">Categories</button>
+</div>
+</body>
+</html>
+

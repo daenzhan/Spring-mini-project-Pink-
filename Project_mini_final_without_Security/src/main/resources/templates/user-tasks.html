@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Tasks of User</title>
+</head>
+<body>
+<h1>Tasks for User: <span th:text="${user.username}"></span></h1>
+
+<div th:if="${#lists.isEmpty(tasks)}">
+  <p>No tasks found for this user.</p>
+</div>
+
+<div th:if="${not #lists.isEmpty(tasks)}">
+  <table>
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Due Date</th>
+      <th>Status</th>
+      <th>Priority</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}">
+      <td th:text="${task.title}"></td>
+      <td th:text="${task.description}"></td>
+      <td th:text="${task.due_date}"></td>
+      <td th:text="${task.status}"></td>
+      <td th:text="${task.priority}"></td>
+    </tr>
+    </tbody>
+  </table>
+</div>
+
+<a href="/">Back to Home</a>
+</body>
+</html>
