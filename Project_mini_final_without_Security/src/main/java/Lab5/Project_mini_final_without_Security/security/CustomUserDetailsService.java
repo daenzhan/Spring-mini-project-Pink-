@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+
     private final UserRepository userRepository;
 
     public CustomUserDetailsService(UserRepository userRepository) {
@@ -16,14 +17,12 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Получаем пользователя по имени пользователя из репозитория
         Lab5.Project_mini_final_without_Security.model.User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("пользователь не найден!"));
 
-        // Возвращаем объект UserDetails, который реализует Spring Security
         return User.withUsername(user.getUsername())
-                .password(user.getPassword())  // Пароль должен быть закодированным
-                .roles("USER")  // Добавьте нужные роли
+                .password(user.getPassword())
+                .roles("USER")
                 .build();
     }
 }

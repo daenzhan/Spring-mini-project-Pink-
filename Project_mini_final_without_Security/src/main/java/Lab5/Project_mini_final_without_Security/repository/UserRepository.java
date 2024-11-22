@@ -8,7 +8,9 @@ import org.springframework.data.mongodb.repository.Query;
 import java.math.BigInteger;
 import java.util.Optional;
 
-public interface UserRepository extends MongoRepository <User, BigInteger>  {
+public interface UserRepository extends MongoRepository <User, ObjectId>  {
     Optional<User> findByUsername(String username);
+
+    User findByUsername_(String username);
 
 }

@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    ;
+
 
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
@@ -31,7 +31,7 @@ public class UserService {
     }
 
     //find
-    public Optional<User> find_by_user_id(BigInteger id) {
+    public Optional<User> find_by_user_id(ObjectId id) {
         return userRepository.findById(id);
     }
 
@@ -42,7 +42,7 @@ public class UserService {
 
 
     //update
-    public User update(BigInteger id, User u) {
+    public User update(ObjectId id, User u) {
         Optional<User> db_u = userRepository.findById(id);
         if (db_u.isEmpty()) {
             throw new RuntimeException("User not found!");
@@ -57,12 +57,16 @@ public class UserService {
 
 
     //delete
-    public void delete (BigInteger user_id){
+    public void delete (ObjectId user_id){
         Optional <User> db_u = userRepository.findById(user_id);
         if (db_u.isEmpty()){
             throw new RuntimeException("пользователь не найден!");
         }
         userRepository.delete(db_u.get());
+    }
+
+    public User findUserByUsername(String username) {
+        return userRepository.findByUsername_(username);
     }
 
 

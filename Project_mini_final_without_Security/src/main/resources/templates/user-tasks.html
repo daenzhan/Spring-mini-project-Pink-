@@ -2,11 +2,234 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>Tasks of User</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f8e1e9; /* Нежно-розовый фон */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: flex-start;
+    }
+
+    h1 {
+      color: #e91e63;
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    th {
+      background-color: #f8bbd0;
+      color: white;
+      font-weight: bold;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #f8bbd0;
+      cursor: pointer;
+    }
+
+    .action-button {
+      padding: 10px 20px;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 5px;
+      border-radius: 5px;
+      border: none;
+      transition: background-color 0.3s;
+    }
+
+    .edit-button {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .edit-button:hover {
+      background-color: #45a049;
+    }
+
+    .delete-button {
+      background-color: #f44336;
+      color: white;
+    }
+
+    .delete-button:hover {
+      background-color: #d32f2f;
+    }
+
+    .no-tasks {
+      font-size: 18px;
+      color: #999;
+      text-align: center;
+    }
+
+    .top-controls {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      width: 100%;
+    }
+
+    .button {
+      background-color: #e91e63; /* Розовый цвет */
+      border: none;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin: 0 10px;
+      min-width: 150px;
+    }
+
+    .button:hover {
+      background-color: #d81b60; /* Тёмно-розовый оттенок при наведении */
+      transform: scale(1.05);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .pagination a {
+      background-color: white;
+      border: 2px solid #e91e63;
+      color: #e91e63;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      margin: 0 5px;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+
+    .pagination a:hover {
+      background-color: #e91e63;
+      color: white;
+      transform: scale(1.05);
+    }
+
+    .pagination .active {
+      background-color: #f8bbd0;
+      pointer-events: none; /* Отключает возможность клика на активную страницу */
+    }
+
+    .pagination a:focus {
+      outline: none;
+      box-shadow: 0 0 5px 2px rgba(233, 30, 99, 0.5);
+    }
+
+    /* Стили для поиска */
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-top: 20px;
+      width: 70%; /* Сделал ширину поиска меньше */
+      justify-content: space-between;
+      background-color: white;
+      padding: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+    }
+
+    .search-container input[type="text"] {
+      width: 75%; /* Сделал поле поиска чуть уже */
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .search-container button {
+      background-color: #e91e63;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    .search-container button:hover {
+      background-color: #d81b60;
+    }
+
+    @media (max-width: 768px) {
+      table {
+        width: 95%;
+      }
+
+      .button {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+
+      h1 {
+        font-size: 24px;
+      }
+
+      .filter-sort-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .search-container input[type="text"] {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-<h1>Tasks for User: <span th:text="${user.username}"></span></h1>
 
-<div th:if="${#lists.isEmpty(tasks)}">
+<!--<h1>Tasks for User: <span th:text="${user.username}"></span></h1>-->
+
+<div class="search-container">
+  <form th:action="@{/tasks/show/{user_id}(user_id=${user.user_id})}" method="get" style="display:flex; flex-wrap: wrap; width: 100%;">
+    <input type="text" id="search" name="search" th:value="${search}" placeholder="Search tasks..." />
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+
+<div th:if="${#lists.isEmpty(tasks)}" class="no-tasks">
   <p>No tasks found for this user.</p>
 </div>
 
@@ -19,20 +242,50 @@
       <th>Due Date</th>
       <th>Status</th>
       <th>Priority</th>
+      <th>Actions</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="task : ${tasks}">
-      <td th:text="${task.title}"></td>
-      <td th:text="${task.description}"></td>
-      <td th:text="${task.due_date}"></td>
-      <td th:text="${task.status}"></td>
-      <td th:text="${task.priority}"></td>
+      <td th:text="${task.title}">Title</td>
+      <td th:text="${task.description}">Description</td>
+      <td th:text="${task.formattedDueDate}">Due Date</td>
+      <td th:text="${task.status}">Status</td>
+      <td th:text="${task.priority}">Priority</td>
+      <td>
+        <form th:action="@{/tasks/edit/{id}(id=${task.task_id})}" method="get" style="display:inline;">
+          <button type="submit" class="action-button edit-button">Edit</button>
+        </form>
+        <form th:action="@{/tasks/delete/{id}(id=${task.task_id})}" method="get" style="display:inline;">
+          <button type="submit" class="action-button delete-button">Delete</button>
+        </form>
+      </td>
     </tr>
     </tbody>
   </table>
+
+
+  <div class="pagination">
+    <a th:if="${current_page > 0}" th:href="@{/tasks/show/{user_id}(user_id=${user.user_id}, page=${current_page - 1}, size=${size})}" aria-label="Previous">← Previous</a>
+
+    <a th:each="i : ${#numbers.sequence(0, total_pages - 1)}"
+       th:href="@{/tasks/show/{user_id}(user_id=${user.user_id}, page=${i}, size=${size})}"
+       th:text="${i + 1}"
+       th:classappend="${i == current_page} ? 'active' : ''"
+       aria-label="Page ${i + 1}"></a>
+
+    <a th:if="${current_page < total_pages - 1}" th:href="@{/tasks/show/{user_id}(user_id=${user.user_id}, page=${current_page + 1}, size=${size})}" aria-label="Next">Next →</a>
+  </div>
 </div>
 
-<a href="/">Back to Home</a>
+<div class="top-controls">
+  <form th:action="@{/main_page/{username}(username=${user.username})}" method="get">
+    <button class="button create-button" type="submit">Back</button>
+  </form>
+
+  <form th:action="@{/tasks/create/{user_id}(user_id=${user.user_id})}" method="get">
+    <button class="button create-button" type="submit">Create New Task</button>
+  </form>
+</div>
 </body>
 </html>

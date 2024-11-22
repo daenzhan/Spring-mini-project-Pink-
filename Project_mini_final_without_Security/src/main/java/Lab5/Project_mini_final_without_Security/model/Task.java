@@ -11,41 +11,43 @@ import java.time.LocalDateTime;
 @Document(collection = "tasks")
 public class Task {
     @Id
-    private BigInteger task_id;
+    private ObjectId task_id;
 
     private String title;
     private String description;
     private LocalDateTime due_date;
     private String status;
     private String priority;
+    private String formattedDueDate;
+
+    private ObjectId user_id;  // связь с пользователем
+
+    @DBRef
+    private User user;
 
     @DBRef(lazy = false)
-    private User user;  // связь с пользователем
-
-    @DBRef(lazy = false)
-    private Category category;
+    private ObjectId category_id;
 
     public Task() {}
 
-    public Task(BigInteger task_id, String title, String description,
-                LocalDateTime due_date, String status, String priority,
-                User user, Category category) {
+    public Task(ObjectId task_id, String title, String description, LocalDateTime due_date,
+                String status, String priority, ObjectId user_id, User user, ObjectId category_id) {
         this.task_id = task_id;
         this.title = title;
         this.description = description;
         this.due_date = due_date;
         this.status = status;
         this.priority = priority;
+        this.user_id = user_id;
         this.user = user;
-        this.category = category;
+        this.category_id = category_id;
     }
 
-    // геттеры и сеттеры
-    public BigInteger getTask_id() {
+    public ObjectId getTask_id() {
         return task_id;
     }
 
-    public void setTask_id(BigInteger task_id) {
+    public void setTask_id(ObjectId task_id) {
         this.task_id = task_id;
     }
 
@@ -89,6 +91,14 @@ public class Task {
         this.priority = priority;
     }
 
+    public ObjectId getUser_id() {
+        return user_id;
+    }
+
+    public void setUser_id(ObjectId user_id) {
+        this.user_id = user_id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -97,11 +107,19 @@ public class Task {
         this.user = user;
     }
 
-    public Category getCategory() {
-        return category;
+    public ObjectId getCategory_id() {
+        return category_id;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategory_id(ObjectId category_id) {
+        this.category_id = category_id;
+    }
+
+    public String getFormattedDueDate() {
+        return formattedDueDate;
+    }
+
+    public void setFormattedDueDate(String formattedDueDate) {
+        this.formattedDueDate = formattedDueDate;
     }
 }

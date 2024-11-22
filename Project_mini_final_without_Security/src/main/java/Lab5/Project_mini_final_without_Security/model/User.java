@@ -1,6 +1,7 @@
 package Lab5.Project_mini_final_without_Security.model;
 
 import jakarta.persistence.OneToMany;
+import org.bson.types.ObjectId;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -18,22 +19,24 @@ import java.util.*;
 @Document(collection = "users")
 public class User implements UserDetails {
     @Id// оказывается mongo автоматом создает айди
-    private BigInteger user_id;
+    private ObjectId user_id;
 
     private String username;
     private String password;
     private String email;
 
+    private String photo;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime create_of;
 
     @DBRef
-    private List <Task> tasks = new ArrayList<>();
+    private List <ObjectId> tasks = new ArrayList<>();
 
     public User (){}
 
     // не пишу задачи в конструктор чтобы они не были обязательными
-    public User(BigInteger user_id, String username, String password, String email, LocalDateTime create_of) {
+    public User(ObjectId user_id, String username, String password, String email, LocalDateTime create_of) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
@@ -41,11 +44,11 @@ public class User implements UserDetails {
         this.create_of = create_of;
     }
 
-    public BigInteger getUser_id() {
+    public ObjectId getUser_id() {
         return user_id;
     }
 
-    public void setUser_id(BigInteger user_id) {
+    public void setUser_id(ObjectId user_id) {
         this.user_id = user_id;
     }
 
@@ -81,11 +84,11 @@ public class User implements UserDetails {
         this.create_of = create_of;
     }
 
-    public List<Task> getTasks() {
+    public List<ObjectId> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public void setTasks(List<ObjectId> tasks) {
         this.tasks = tasks;
     }
 
@@ -114,7 +117,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // Если у вас нет ролей, возвращаем пустой список
         return new ArrayList<>();
     }
 

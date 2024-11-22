@@ -17,7 +17,7 @@ public class Category {
     private String description;
 
     @DBRef
-    private List<Task> tasks;
+    private List<BigInteger> tasks;
 
 
     public Category (){}
@@ -53,11 +53,11 @@ public class Category {
         this.description = description;
     }
 
-    public List<Task> getTasks() {
+    public List<BigInteger> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
+    public void setTasks(List<BigInteger> tasks) {
         this.tasks = tasks;
     }
 

@@ -9,6 +9,7 @@ import Lab5.Project_mini_final_without_Security.service.TaskService;
 import Lab5.Project_mini_final_without_Security.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.bson.types.ObjectId;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,11 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.ui.Model;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,54 +31,126 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@Controller
+
+
+@Controller // Используем Controller для работы с HTML и Thymeleaf
 public class TaskController {
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private HttpSession session;
-
-
-    @GetMapping("/tasks")
-    public String getTasks(HttpSession session, Model model) {
-        User user = (User) session.getAttribute("user");
-
-        if (user == null) {
-            return "redirect:/login";
-        }
-        List<Task> tasks = taskService.findByUser(user);
-
-        model.addAttribute("tasks", tasks);
-
-        return "user-tasks";
+    public TaskController(TaskService taskService, UserService userService, UserRepository userRepository) {
+        this.taskService = taskService;
+        this.userService = userService;
+        this.userRepository = userRepository;
     }
 
 
+}
 
 
-//    @GetMapping("/tasks/{userId}")
-//    public String getTasksByUser(@PathVariable("userId") BigInteger userId, Model model) {
-//        User user = userService.find_by_user_id(userId).orElseThrow(() -> new RuntimeException("User not found"));
+
+//@RestController // Используем RestController для работы с JSON
+//@RequestMapping("/api") // Базовый путь для API
+//public class TaskController {
+//
+//    private final TaskService taskService;
+//    private final UserService userService;
+//
+//    public TaskController(TaskService taskService, UserService userService) {
+//        this.taskService = taskService;
+//        this.userService = userService;
+//    }
+//
+//    // GET-запрос для получения задач пользователя
+//    @GetMapping("/tasks/{user_id}")
+//    public ResponseEntity<?> getUserTasks(@PathVariable("user_id") ObjectId user_id) {
+//        Optional<User> user_db = userService.find_by_user_id(user_id);
+//        if (user_db.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(Map.of("error", "Пользователь не найден!"));
+//        }
+//
+//        User user = user_db.get();
+//        List<Task> tasks = taskService.findByUserId(user_id);
+//
+//        Map<String, Object> response = Map.of(
+//                "user_id", user.getUser_id(),
+//                "user_name", user.getUsername(),
+//                "tasks", tasks
+//        );
+//
+//        return ResponseEntity.ok(response);
+//    }
+//
+//    // POST-запрос для создания новой задачи
+//    @PostMapping("/tasks/{user_id}")
+//    public ResponseEntity<?> createTask(@PathVariable("user_id") ObjectId user_id, @RequestBody Task task) {
+//        Optional<User> user_db = userService.find_by_user_id(user_id);
+//        if (user_db.isEmpty()) {
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+//                    .body(Map.of("error", "Пользователь не найден!"));
+//        }
+//
+//        User user = user_db.get();
+//        task.setUser(user); // Привязываем задачу к пользователю
+//        taskService.save(task); // Сохраняем задачу
+//
+//        Map<String, Object> response = Map.of(
+//                "message", "Задача успешно добавлена!",
+//                "task", task
+//        );
+//
+//        return ResponseEntity.status(HttpStatus.CREATED).body(response); // Ответ с созданной задачей и статусом 201
+//    }
+//}
+
+//
+//@Controller
+//public class TaskController {
+//
+//    private final TaskService taskService;
+//    private final UserService userService;
+//
+//    public TaskController(TaskService taskService, UserService userService) {
+//        this.taskService = taskService;
+//        this.userService = userService;
+//    }
+//
+//    @GetMapping("/tasks/{user_id}")
+//    public String getUserTasks(@PathVariable("user_id") BigInteger user_id, Model model) {
+//        Optional<User> user_db = userService.find_by_user_id(user_id);
+//        if (user_db.isEmpty()) {
+//            model.addAttribute("error", "пользователь не найден!");
+//            return "error";
+//        }
+//        User user = user_db.get();
+//        List<Task> tasks = taskService.findByUserId(user_id);
+//        model.addAttribute("user_id", user.getUser_id());
+//        model.addAttribute("tasks", tasks);
+//        return "user-tasks";
+//    }
+
+
+
+//    @GetMapping("/tasks")
+//    public String getTasks(HttpSession session, Model model) {
+//        User user = (User) session.getAttribute("user");
+//
+//        if (user == null) {
+//            return "redirect:/login";
+//        }
 //        List<Task> tasks = taskService.findByUser(user);
 //
 //        model.addAttribute("tasks", tasks);
-//        model.addAttribute("user", user);
 //
-//        return "tasks";
+//        return "user-tasks";
 //    }
 
-}
+
+
+
 
 
 

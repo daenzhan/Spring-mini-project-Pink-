@@ -14,17 +14,31 @@ import java.util.Optional;
 
 @Service
 public class TaskService {
-    private final TaskRepository taskRepository;
+    private final TaskRepository taskRepo;
 
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskService(TaskRepository taskRepo) {
+        this.taskRepo = taskRepo;
     }
 
 
     // create
     public Task create_task (Task t){
-        return taskRepository.save(t);
+        return taskRepo.save(t);
     }
+
+    public List<Task> findByUserId(ObjectId user_id) {
+        return taskRepo.findByUserId(user_id);
+    }
+
+    public Task save (Task t){
+        return taskRepo.save(t);
+    }
+
+    public void delete_task(ObjectId task_id) {
+        taskRepo.deleteById(task_id);
+    }
+
+
 
     // show
 //    public List<Task> get_list_taks_by_user_id (BigInteger user_id){
@@ -64,8 +78,6 @@ public class TaskService {
 //        }
 //    }
 
-    public List<Task> findByUser(User user) {
-        return taskRepository.findByUser(user);
-    }
+
 
 }

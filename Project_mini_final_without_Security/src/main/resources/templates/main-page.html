@@ -13,39 +13,128 @@
             height: 100vh;
             background-color: #f0f0f0;
             margin: 0;
+            flex-direction: column;
+            padding: 20px;
+            box-sizing: border-box;
         }
+
+        h1 {
+            font-size: 36px;
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 40px;
+        }
+
         .container {
             text-align: center;
+            max-width: 600px;
+            width: 100%;
         }
-        .button {
-            background-color: #4CAF50;
+
+        .button, .tasks-button {
+            background-color: #f8bbd0;
             border: none;
             color: white;
-            padding: 15px 32px;
-            font-size: 18px;
+            padding: 20px 40px;
+            font-size: 20px;
             cursor: pointer;
-            margin: 10px;
+            margin: 15px;
             border-radius: 5px;
-            width: 200px;
+            width: 100%;
+            max-width: 250px;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            display: inline-block;
         }
-        .button:hover {
-            background-color: #45a049;
+
+        .button:hover, .tasks-button:hover {
+            background-color: #f48fb1;
+            animation: gentleShake 0.5s ease-in-out; /* Нежное дергание при наведении */
+        }
+
+        .container .button {
+            margin: 10px 0;
+        }
+
+        .exist-button {
+            background-color: #e91e63;
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            color: white;
+            font-size: 18px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .exist-button:hover {
+            background-color: #c2185b;
+            animation: gentleShake 0.5s ease-in-out; /* Нежное дергание при наведении */
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 28px;
+            }
+
+            .button, .tasks-button {
+                width: 100%;
+                max-width: 100%;
+            }
+
+            .exist-button {
+                bottom: 10px;
+                right: 10px;
+                padding: 12px 25px;
+            }
+        }
+
+        /* Нежное дергание */
+        @keyframes gentleShake {
+            0% {
+                transform: translateX(0);
+            }
+            20% {
+                transform: translateX(-2px);
+            }
+            40% {
+                transform: translateX(2px);
+            }
+            60% {
+                transform: translateX(-2px);
+            }
+            80% {
+                transform: translateX(2px);
+            }
+            100% {
+                transform: translateX(0);
+            }
         }
     </style>
 </head>
 <body>
+<h1>Welcome, <span th:text="${user.username}">Username</span>!</h1> <!-- Выводим имя пользователя -->
+
 <div class="container">
-    <!-- Кнопка для перехода на страницу пользователей -->
-    <button class="button" onclick="window.location.href='http://localhost:8080/users/show'">Users</button>
+<!--    <button class="button" onclick="window.location.href='/users/show'">Users</button>-->
 
-    <!-- Кнопка для перехода на страницу задач с передачей user_id -->
-    <button class="button" onclick="window.location.href='http://localhost:8080/tasks'">Tasks</button>
-<!--    <button class="button" onclick="window.location.href='/tasks'">Tasks</button>-->
+    <form th:action="@{/users/show/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+        <button type="submit" class="tasks-button">Users</button>
+    </form>
 
+    <button class="button" onclick="window.location.href='/categories'">Categories</button>
 
-    <!-- Кнопка для перехода на страницу категорий -->
-    <button class="button" onclick="window.location.href='http://localhost:8080/categories'">Categories</button>
+    <!-- Форма для перехода на страницу задач пользователя -->
+    <form th:action="@{/tasks/show/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+        <button type="submit" class="tasks-button">Tasks</button>
+    </form>
 </div>
+
+<!-- Кнопка для выхода -->
+<button class="exist-button" onclick="window.location.href='/logout'">Logout</button>
 </body>
 </html>
-
