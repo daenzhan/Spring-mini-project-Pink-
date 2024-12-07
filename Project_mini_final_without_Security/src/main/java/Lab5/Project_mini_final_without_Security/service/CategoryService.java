@@ -47,7 +47,7 @@ public class CategoryService {
     }
 
     //delete
-    public void delete (BigInteger category_id){
+    public void delete (ObjectId category_id){
         Optional<Category> c_db = categoryRepository.findById(category_id);
         if (c_db.isPresent()){
             Category exist_c = c_db.get();

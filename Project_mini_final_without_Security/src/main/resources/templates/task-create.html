@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Task</title>
+    <title>Create</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
             margin: 0;
             padding: 0;
             display: flex;
@@ -15,50 +15,59 @@
         }
 
         .container {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             width: 400px;
             max-width: 100%;
+            border: 1px solid #e0e0e0;
         }
 
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            color: #333;
+            color: #d81b60;
+            font-size: 24px;
         }
 
         label {
             display: block;
             margin: 10px 0 5px;
             font-weight: bold;
-            color: #555;
+            color: #d81b60;
         }
 
         input[type="text"], input[type="date"], select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            border: 1px solid #d81b60;
+            border-radius: 8px;
             font-size: 16px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            border-color: #d81b60; /* Темно-розовый цвет при фокусе */
+            outline: none;
         }
 
         button {
             width: 100%;
-            padding: 12px;
-            background-color: #28a745;
+            padding: 14px;
+            background-color: #f06292; /* Розовый фон кнопки */
             color: white;
             font-size: 18px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #218838;
+            background-color: #d81b60; /* Темно-розовый при наведении */
         }
 
         a {
@@ -66,18 +75,35 @@
             text-align: center;
             margin-top: 20px;
             font-size: 16px;
-            color: #007bff;
+            color: #f06292; /* Розовый цвет ссылки */
             text-decoration: none;
         }
 
         a:hover {
             text-decoration: underline;
         }
+
+        /* Mobile responsiveness */
+        @media (max-width: 480px) {
+            .container {
+                padding: 15px;
+                width: 90%;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            button {
+                font-size: 16px;
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1>Create Task</h1>
+    <h1>Create</h1>
     <form th:action="@{'/tasks/create/' + ${user_id}}" method="post">
         <label for="title">Title:</label>
         <input type="text" id="title" name="title" placeholder="Enter task title" required />
@@ -100,6 +126,13 @@
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
             <option value="HIGH">High</option>
+        </select>
+
+        <label for="category">Category:</label>
+        <select id="category" name="category_id" required>
+            <th:block th:each="category : ${categories}">
+                <option th:value="${category.category_id}" th:text="${category.name}"></option>
+            </th:block>
         </select>
 
         <button type="submit">Submit</button>

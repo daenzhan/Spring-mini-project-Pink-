@@ -140,7 +140,7 @@
 
     .pagination .active {
       background-color: #f8bbd0;
-      pointer-events: none; /* Отключает возможность клика на активную страницу */
+      pointer-events: none;
     }
 
     .pagination a:focus {
@@ -148,12 +148,12 @@
       box-shadow: 0 0 5px 2px rgba(233, 30, 99, 0.5);
     }
 
-    /* Стили для поиска */
+
     .search-container {
       display: flex;
       align-items: center;
       margin-top: 20px;
-      width: 70%; /* Сделал ширину поиска меньше */
+      width: 70%;
       justify-content: space-between;
       background-color: white;
       padding: 10px;
@@ -162,7 +162,7 @@
     }
 
     .search-container input[type="text"] {
-      width: 75%; /* Сделал поле поиска чуть уже */
+      width: 75%;
       padding: 10px;
       font-size: 14px;
       border: 1px solid #ddd;
@@ -242,6 +242,7 @@
       <th>Due Date</th>
       <th>Status</th>
       <th>Priority</th>
+      <th>Category</th>
       <th>Actions</th>
     </tr>
     </thead>
@@ -252,12 +253,17 @@
       <td th:text="${task.formattedDueDate}">Due Date</td>
       <td th:text="${task.status}">Status</td>
       <td th:text="${task.priority}">Priority</td>
+      <td th:text="${task.category_name}">Category</td>
       <td>
         <form th:action="@{/tasks/edit/{id}(id=${task.task_id})}" method="get" style="display:inline;">
           <button type="submit" class="action-button edit-button">Edit</button>
         </form>
         <form th:action="@{/tasks/delete/{id}(id=${task.task_id})}" method="get" style="display:inline;">
           <button type="submit" class="action-button delete-button">Delete</button>
+        </form>
+
+        <form th:action="@{/tasks/complete/{id}(id=${task.task_id})}" method="post" style="display:inline;">
+          <button type="submit" class="action-button" style="background-color: #2196F3; color: white;">Complete</button>
         </form>
       </td>
     </tr>
@@ -284,7 +290,7 @@
   </form>
 
   <form th:action="@{/tasks/create/{user_id}(user_id=${user.user_id})}" method="get">
-    <button class="button create-button" type="submit">Create New Task</button>
+    <button class="button create-button" type="submit">Create</button>
   </form>
 </div>
 </body>

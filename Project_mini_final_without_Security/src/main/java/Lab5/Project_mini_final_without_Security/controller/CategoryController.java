@@ -4,6 +4,7 @@ import Lab5.Project_mini_final_without_Security.model.Category;
 import Lab5.Project_mini_final_without_Security.model.User;
 import Lab5.Project_mini_final_without_Security.repository.CategoryRepository;
 import Lab5.Project_mini_final_without_Security.service.CategoryService;
+import org.bson.types.ObjectId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class CategoryController {
@@ -39,6 +41,18 @@ public class CategoryController {
         }
     }
 
+    @GetMapping("/create/category")
+    public String create_category_form (Model model){
+        model.addAttribute("category", new Category());
+        return "category-form";
+    }
+
+    @PostMapping("/create/category")
+    public String create_category(@ModelAttribute Category c)
+    {
+        categoryService.create(c);
+        return "redirect:/categories";
+    }
 
 
 //

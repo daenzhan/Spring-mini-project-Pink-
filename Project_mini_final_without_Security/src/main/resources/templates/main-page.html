@@ -18,11 +18,40 @@
             box-sizing: border-box;
         }
 
-        h1 {
-            font-size: 36px;
-            font-weight: bold;
+        header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 98%;
+            background-color: #e91e63;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .profile-button {
+            background-color: white;
             color: #e91e63;
-            margin-bottom: 40px;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .profile-button:hover {
+            background-color: #f8bbd0;
+            color: white;
         }
 
         .container {
@@ -49,11 +78,7 @@
 
         .button:hover, .tasks-button:hover {
             background-color: #f48fb1;
-            animation: gentleShake 0.5s ease-in-out; /* Нежное дергание при наведении */
-        }
-
-        .container .button {
-            margin: 10px 0;
+            animation: gentleShake 0.5s ease-in-out;
         }
 
         .exist-button {
@@ -73,12 +98,17 @@
 
         .exist-button:hover {
             background-color: #c2185b;
-            animation: gentleShake 0.5s ease-in-out; /* Нежное дергание при наведении */
+            animation: gentleShake 0.5s ease-in-out;
         }
 
         @media (max-width: 600px) {
-            h1 {
-                font-size: 28px;
+            header h1 {
+                font-size: 20px;
+            }
+
+            .profile-button {
+                font-size: 14px;
+                padding: 8px 15px;
             }
 
             .button, .tasks-button {
@@ -93,48 +123,38 @@
             }
         }
 
-        /* Нежное дергание */
         @keyframes gentleShake {
-            0% {
-                transform: translateX(0);
-            }
-            20% {
-                transform: translateX(-2px);
-            }
-            40% {
-                transform: translateX(2px);
-            }
-            60% {
-                transform: translateX(-2px);
-            }
-            80% {
-                transform: translateX(2px);
-            }
-            100% {
-                transform: translateX(0);
-            }
+            0% { transform: translateX(0); }
+            20% { transform: translateX(-2px); }
+            40% { transform: translateX(2px); }
+            60% { transform: translateX(-2px); }
+            80% { transform: translateX(2px); }
+            100% { transform: translateX(0); }
         }
     </style>
 </head>
 <body>
-<h1>Welcome, <span th:text="${user.username}">Username</span>!</h1> <!-- Выводим имя пользователя -->
+<header>
 
+    <form th:action="@{/show/profile/{user_id}(user_id=${user.user_id})}" method="get" style="margin: 0;">
+        <button type="submit" class="profile-button">Profile</button>
+    </form>
+</header>
+
+
+<h1 style="color: #e91e63;">Welcome, <span th:text="${user.username}">Username</span>!</h1>
 <div class="container">
-<!--    <button class="button" onclick="window.location.href='/users/show'">Users</button>-->
-
-    <form th:action="@{/users/show/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+    <form th:if="${user.role == 'ADMIN'}" th:action="@{/users/show/{username}(username=${user.username})}" method="get" style="display:inline;">
         <button type="submit" class="tasks-button">Users</button>
     </form>
 
     <button class="button" onclick="window.location.href='/categories'">Categories</button>
 
-    <!-- Форма для перехода на страницу задач пользователя -->
     <form th:action="@{/tasks/show/{id}(id=${user.user_id})}" method="get" style="display:inline;">
         <button type="submit" class="tasks-button">Tasks</button>
     </form>
 </div>
 
-<!-- Кнопка для выхода -->
-<button class="exist-button" onclick="window.location.href='/logout'">Logout</button>
+<!--<button class="exist-button" onclick="window.location.href='/logout'">Logout</button>-->
 </body>
 </html>

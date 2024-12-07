@@ -147,11 +147,11 @@
         <td th:text="${user.create_of}">Create_of</td>
 
         <td>
-            <form th:action="@{/edit/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+            <form th:action="@{/edit/{id}/{username}(id=${user.user_id}, username=${user_.username})}" method="get" style="display:inline;">
                 <button type="submit" class="action-button view-button">Edit</button>
             </form>
 
-            <form th:action="@{/delete/{id}(id=${user.user_id})}" method="get" style="display:inline;">
+            <form th:action="@{/delete/{id}/{username}(id=${user.user_id}, username=${user_.username})}" method="get" style="display:inline;">
                 <button type="submit" class="action-button delete-button">Delete</button>
             </form>
         </td>
@@ -165,7 +165,7 @@
     </tbody>
 </table>
 
-<form th:action="@{/main_page/{username}(username=${user.username})}" method="get" style="display:inline;">
+<form th:action="@{/main_page/{username}(username=${user_.username})}" method="get" style="display:inline;">
     <button type="submit" class="button">Back</button>
 </form>
 

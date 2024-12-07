@@ -1,21 +1,28 @@
-package Lab5.Project_mini_final_without_Security.controller;
-
+package Lab5.Project_mini_final_without_Security.security;
+import Lab5.Project_mini_final_without_Security.model.Category;
 import Lab5.Project_mini_final_without_Security.model.Task;
 import Lab5.Project_mini_final_without_Security.model.User;
+import Lab5.Project_mini_final_without_Security.repository.CategoryRepository;
 import Lab5.Project_mini_final_without_Security.repository.TaskRepository;
 import Lab5.Project_mini_final_without_Security.repository.UserRepository;
+import Lab5.Project_mini_final_without_Security.service.EmailService;
 import Lab5.Project_mini_final_without_Security.service.TaskService;
 import Lab5.Project_mini_final_without_Security.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.bson.types.ObjectId;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -23,6 +30,8 @@ import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class UserController {
@@ -33,43 +42,36 @@ public class UserController {
     private final PasswordEncoder password_end;
     private final TaskService taskService;
     private final TaskRepository taskRepository;
+    private final CategoryRepository categoryRepository;
+    private final EmailService emailService;
 
     public UserController(UserService userService, UserRepository userRepository,
                           PasswordEncoder password_end, TaskService taskService,
-                          TaskRepository taskRepository) {
+                          TaskRepository taskRepository, CategoryRepository categoryRepository, EmailService emailService) {
         this.userService = userService;
         this.userRepository = userRepository;
         this.password_end = password_end;
         this.taskService = taskService;
         this.taskRepository = taskRepository;
+        this.categoryRepository = categoryRepository;
+        this.emailService = emailService;
     }
-
 
 
     // MAIN PAGE
     @GetMapping("/main_page/{username}")
     public String getUserPage(@PathVariable("username") String username, Model model) {
         User u = userService.findUserByUsername(username);
-
         if (u != null) {
             model.addAttribute("user", u);
-            return "main-page";  // Название страницы, на которой будет доступен объект user
-        } else {
-            return "redirect:/error";  // Перенаправление на страницу с ошибкой, если пользователя нет
+            return "main-page";
         }
+        return "redirect:/error";
     }
 
 
-
-
-
-
-
-
-
-
     //REGISTER - LOGIN - SAVE
-    @GetMapping("register")
+    @GetMapping("/register")
     public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
         return "register";
@@ -79,13 +81,13 @@ public class UserController {
     @PostMapping("/register")
     public String registerUser(@ModelAttribute User user) {
         user.setCreate_of(LocalDateTime.now());
+        user.setRole("USER");
         userService.create(user);
         return "login";
     }
 
 
     // LOGIN
-
     @GetMapping("/login")
     public String showLoginForm(@RequestParam(value = "error", required = false) String error,
                                 @RequestParam(value = "logout", required = false) String logout,
@@ -96,7 +98,7 @@ public class UserController {
         if (logout != null) {
             model.addAttribute("message", "You have been logged out successfully.");
         }
-        return "login"; // Имя HTML-шаблона для страницы входа
+        return "login";
     }
 
     @PostMapping("/login")
@@ -155,32 +157,37 @@ public class UserController {
 //    }
 
 
-
-
     // USER LIST - SHOW
-    @GetMapping("users/show/{user_id}")
-    public String showUsers(Model model, @PathVariable("user_id") ObjectId user_id) {
+    @GetMapping("/users/show/{username_}")
+    public String showUsers(Model model, @PathVariable("username_") String username) {
         try {
-            Optional<User> user = userRepository.findById(user_id);
-            List<User> users = userService.show();
-            model.addAttribute("users", users);
-            model.addAttribute("user", user.get());
-            return "user-list";
+            Optional<User> user = userRepository.findByUsername(username);
+            if (user.isPresent()) {
+                List<User> users = userService.show();
+                model.addAttribute("users", users);
+                model.addAttribute("user_", user.get());
+                return "user-list";
+            } else {
+                model.addAttribute("error", "User not found");
+                return "error";
+            }
         } catch (Exception e) {
+            model.addAttribute("error", "An error occurred: " + e.getMessage());
             return "error";
         }
     }
 
 
-
-
     // UPDATE - PUTMAPPING
-    @GetMapping("/edit/{user_id}")
-    public String showEditForm(@PathVariable("user_id") ObjectId id, Model model) {
+    @GetMapping("/edit/{user_id}/{username_}")
+    public String showEditForm(@PathVariable("user_id") ObjectId id,
+                               @PathVariable("username_") String username_, Model model) {
         try {
             Optional<User> user = userService.find_by_user_id(id);
+            User user_ = userService.findUserByUsername(username_);
             if (user.isPresent()) {
                 model.addAttribute("user", user.get());
+                model.addAttribute("user_", user_);
                 return "user-form";
             } else {
                 return "error";
@@ -190,33 +197,67 @@ public class UserController {
         }
     }
 
-    @PostMapping("/edit/{user_id}")
-    public String updateUser(@PathVariable("user_id") ObjectId user_id, User user) {
+    @PostMapping("/edit/{user_id}/{username_}")
+    public String updateUser(@PathVariable("user_id") ObjectId user_id,
+                             @PathVariable("username_") String username_,
+                             User user) {
         try {
-                userService.update(user_id,user);
-                return "redirect:/users/show";
+            userService.update(user_id, user);
+            return "redirect:/users/show/" + username_;
 
         } catch (Exception e) {
             return "error";
         }
     }
 
+
+    // UPDATE - PUTMAPPING
+    @GetMapping("/edit/own/{user_id}")
+    public String showEditForm(@PathVariable("user_id") ObjectId id, Model model) {
+        try {
+            Optional<User> user = userService.find_by_user_id(id);
+            Optional<User> user_ = userService.find_by_user_id(id);
+            if (user.isPresent()) {
+                model.addAttribute("user", user.get());
+                model.addAttribute("user_", user_.get());
+                return "user-form";
+            } else {
+                return "error";
+            }
+        } catch (Exception e) {
+            return "error";
+        }
+    }
+
+    @PostMapping("/edit/own/{user_id}")
+    public String updateUser(@PathVariable("user_id") ObjectId user_id,
+                             User user) {
+        try {
+            userService.update(user_id, user);
+            return "redirect:/show/profile/" + user_id;
+
+        } catch (Exception e) {
+            return "error";
+        }
+    }
 
 
     // DELETE
-    @GetMapping("/delete/{user_id}")
-    public String deleteUser(@PathVariable("user_id") ObjectId user_id) {
+    @GetMapping("/delete/{user_id}/{username_}")
+    public String deleteUser(@PathVariable("user_id") ObjectId user_id,
+                             @PathVariable("username_") String username_) {
         try {
             userService.delete(user_id);
-            return "redirect:/users/show/" + user_id;
+            return "redirect:/users/show/" + username_;
         } catch (Exception e) {
             return "error";
         }
     }
 
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // SHOW TASKS  - GET
+
     @GetMapping("tasks/show/{user_id}")
     public String getUserTasks(@PathVariable("user_id") ObjectId user_id,
                                @RequestParam(value = "page", defaultValue = "0") int page,
@@ -232,6 +273,7 @@ public class UserController {
         User user = user_db.get();
         List<Task> tasksList;
         Page<Task> tasksPage = null;
+
 
         if (search != null) {
             tasksList = taskRepository.findByUser_idAndTitleContaining(user_id, search);
@@ -251,6 +293,7 @@ public class UserController {
             task.setFormattedDueDate(formattedDate);
         }
 
+
         model.addAttribute("user", user);
         model.addAttribute("tasks", tasksList);
         model.addAttribute("current_page", page);
@@ -262,37 +305,6 @@ public class UserController {
     }
 
 
-//    @GetMapping("tasks/show/{user_id}")
-//    public String getUserTasks(@PathVariable("user_id") ObjectId user_id, Model model) {
-//
-//        Logger logger = LoggerFactory.getLogger(getClass());
-//        logger.info("Попытка найти пользователя с id: {}", user_id);
-//
-//        Optional<User> user_db = userRepository.findById(user_id);
-//
-//        if (user_db.isEmpty()) {
-//            logger.error("Пользователь с id {} не найден", user_id);
-//            model.addAttribute("error", "Пользователь не найден!");
-//            return "error";
-//        }
-//        User user = user_db.get();
-//        logger.info("Пользователь найден: {}", user.getUsername());
-//
-//        List<Task> tasks = taskRepository.findByUserId(user_id);
-//
-//        if (tasks.isEmpty()) {
-//            logger.warn("У пользователя {} нет задач", user.getUsername());
-//        }
-//
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-//        for (Task task : tasks) {
-//            String formattedDate = task.getDue_date() != null ? task.getDue_date().format(formatter) : "N/A";
-//            task.setFormattedDueDate(formattedDate);
-//        }
-//        model.addAttribute("user", user);
-//        model.addAttribute("tasks", tasks);
-//        return "user-tasks";
-//    }
 
 
 
@@ -307,6 +319,7 @@ public class UserController {
         }
 
         model.addAttribute("user_id", user_id);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "task-create";
     }
 
@@ -319,16 +332,21 @@ public class UserController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate,
             @RequestParam String status,
             @RequestParam String priority,
+            @RequestParam ObjectId category_id,
             Model model
     ) {
-        Logger logger = LoggerFactory.getLogger(getClass());
         Optional<User> user = userRepository.findById(user_id);
         if (user.isEmpty()) {
-            logger.error("Пользователь с id {} не найден", user_id);
             model.addAttribute("error", "Пользователь не найден!");
             return "error";
         }
         LocalDateTime dueDateTime = dueDate.atStartOfDay();
+        Optional<Category> category = categoryRepository.findById(category_id);
+        if (category.isEmpty()) {
+            model.addAttribute("error", "задача не найдена!");
+            return "error";
+        }
+
         Task task = new Task();
         task.setUser_id(user_id);
         task.setTitle(title);
@@ -336,10 +354,10 @@ public class UserController {
         task.setDue_date(dueDateTime);
         task.setStatus(status);
         task.setPriority(priority);
+        task.setCategory_id(category_id);
+        task.setCategory_name((category.get()).getName());
 
         taskRepository.save(task);
-        logger.info("Задача успешно сохранена: {}", task);
-
         return "redirect:/tasks/show/" + user_id;
     }
 
@@ -361,7 +379,10 @@ public class UserController {
             return "error";
         }
 
-        model.addAttribute("task", task.get());
+        Task t = task.get();
+
+        model.addAttribute("task", t);
+        model.addAttribute("categories", categoryRepository.findAll());
         return "task-form";
     }
 
@@ -373,13 +394,12 @@ public class UserController {
             @RequestParam String formattedDueDate,
             @RequestParam String status,
             @RequestParam String priority,
+            @RequestParam String category_name,
             Model model
     ) {
-        Logger logger = LoggerFactory.getLogger(getClass());
 
         Optional<Task> task = taskRepository.findById(task_id);
         if (task.isEmpty()) {
-            logger.error("Задача с id {} не найдена", task_id);
             model.addAttribute("error", "Задача не найдена!");
             return "error";
         }
@@ -390,10 +410,8 @@ public class UserController {
         t.setFormattedDueDate(formattedDueDate);
         t.setStatus(status);
         t.setPriority(priority);
-
+        t.setCategory_name(category_name);
         taskRepository.save(t);
-        logger.info("Задача с id {} успешно обновлена", task_id);
-
         return "redirect:/tasks/show/" + t.getUser_id();
     }
 
@@ -407,8 +425,71 @@ public class UserController {
         return "redirect:/tasks/show/" + t.getUser_id();
     }
 
-}
 
+    // COMPLETE TASKS
+    @PostMapping("/tasks/complete/{task_id}")
+    public String complete_task (@PathVariable("task_id") ObjectId task_id){
+        Optional<Task> task_db = taskRepository.findById(task_id);
+        Task t = task_db.get();
+        if(!t.getStatus().equals("COMPLETED")){
+            t.setStatus("COMPLETED");
+            taskService.save(t);
+
+            ObjectId user_id = t.getUser_id();
+            Optional<User> user_db = userService.find_by_user_id(user_id);
+            User u = user_db.get();
+            String user_email = u.getEmail();
+            String title = "твоя задача завершена!";
+            String body = "твоя задача - " + t.getTitle() + "- успешно завершена!";
+            emailService.send_email(user_email,title, body);
+        }
+        return "redirect:/tasks/show/" + t.getUser_id();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // Profile
+    @GetMapping ("/show/profile/{user_id}")
+    public String show_profile (@PathVariable ("user_id") ObjectId user_id, Model model){
+        Optional <User> u = userRepository.findById(user_id);
+        model.addAttribute("user", u.get());
+        return "user-profile";
+    }
+
+    @PostMapping("/upload/photo/{user_id}")
+    public String uploadPhoto(
+            @PathVariable("user_id") ObjectId user_id,
+            @RequestParam("photo") MultipartFile file,
+            RedirectAttributes redirectAttributes) {
+        try {
+
+            String upload = "D:\\Downloads\\Project_mini_final_without_Security\\Project_mini_final_without_Security\\src\\main\\resources\\static\\images\\";
+
+            if (!file.isEmpty()) {
+                String file_name = file.getOriginalFilename();
+                Path file_path = Paths.get(upload + file_name);
+
+                Files.copy(file.getInputStream(), file_path, StandardCopyOption.REPLACE_EXISTING);
+
+                Optional<User> user = userRepository.findById(user_id);
+                if (user.isPresent()) {
+                    User u = user.get();
+                    u.setPhoto("/images/" + file_name);
+                    userRepository.save(u);
+                }
+            }
+            redirectAttributes.addFlashAttribute("message", "фото загрузилось!");
+        } catch (Exception e) {
+            e.printStackTrace();
+            redirectAttributes.addFlashAttribute("message", "фото не загрузилось!");
+        }
+        return "redirect:/show/profile/" + user_id;
+    }
+
+
+
+
+}
 
 
 

@@ -7,33 +7,36 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 @Document(collection = "categories")
 public class Category {
     @Id
-    private BigInteger category_id;
+    private ObjectId category_id;
 
     private String name;
     private String description;
 
     @DBRef
-    private List<BigInteger> tasks;
+    private List<ObjectId> tasks;
 
 
     public Category (){}
 
     // задачи я не включила в конструктор - чтобы сначала создать категорию, а уж потом добавлять
-    public Category(BigInteger category_id, String name, String description) {
+
+    public Category(ObjectId category_id, String name, String description, List<ObjectId> tasks) {
         this.category_id = category_id;
         this.name = name;
         this.description = description;
+        this.tasks = tasks;
     }
 
-    public BigInteger getCategory_id() {
+    public ObjectId getCategory_id() {
         return category_id;
     }
 
-    public void setCategory_id(BigInteger category_id) {
+    public void setCategory_id(ObjectId category_id) {
         this.category_id = category_id;
     }
 
@@ -53,13 +56,11 @@ public class Category {
         this.description = description;
     }
 
-    public List<BigInteger> getTasks() {
+    public List<ObjectId> getTasks() {
         return tasks;
     }
 
-    public void setTasks(List<BigInteger> tasks) {
+    public void setTasks(List<ObjectId> tasks) {
         this.tasks = tasks;
     }
-
-
 }

@@ -24,6 +24,8 @@ public class User implements UserDetails {
     private String username;
     private String password;
     private String email;
+    private String role;
+
 
     private String photo;
 
@@ -35,13 +37,16 @@ public class User implements UserDetails {
 
     public User (){}
 
+
     // не пишу задачи в конструктор чтобы они не были обязательными
-    public User(ObjectId user_id, String username, String password, String email, LocalDateTime create_of) {
+    public User(ObjectId user_id, String username, String password, String email,
+                LocalDateTime create_of, String role) {
         this.user_id = user_id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.create_of = create_of;
+        this.role = role;
     }
 
     public ObjectId getUser_id() {
@@ -120,4 +125,19 @@ public class User implements UserDetails {
         return new ArrayList<>();
     }
 
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(String photo) {
+        this.photo = photo;
+    }
 }

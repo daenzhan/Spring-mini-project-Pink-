@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Profile</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8e1e9;
+    }
+
+    .profile-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .profile-header img {
+      border-radius: 50%;
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+
+    .profile-header h1 {
+      font-size: 24px;
+      margin: 0;
+      color: #333;
+    }
+
+    .profile-header p {
+      color: #777;
+      margin: 5px 0 10px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #e91e63;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .form-actions button {
+      padding: 10px 20px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+      background-color: #e91e63;
+      transition: background-color 0.3s ease;
+    }
+
+    .form-actions button:hover {
+      background-color: #c2185b;
+    }
+
+    .logout-button {
+      background-color: #f44336;
+    }
+
+    .logout-button:hover {
+      background-color: #d32f2f;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center; /* Центрирует по горизонтали */
+      margin-bottom: 20px; /* Добавлен отступ снизу */
+    }
+
+    .button {
+      background-color: #e91e63; /* Розовый цвет */
+      border: none;
+      color: white;
+      padding: 14px 28px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      margin: 0 10px;
+      min-width: 150px;
+    }
+
+    .upload-button-container {
+      display: flex;
+      justify-content: flex-start; /* Выровнять по левому краю */
+      margin-top: 30px; /* Отступ сверху для кнопки загрузки */
+    }
+
+    .upload-button-container button {
+      margin-left: 10px; /* Добавлен отступ между кнопками */
+    }
+  </style>
+</head>
+<body>
+<div class="profile-container">
+  <div class="profile-header">
+    <img th:if="${user.photo != null}" th:src="@{${user.photo}}" alt="User Photo">
+    <img th:if="${user.photo == null}" th:src="@{/images/default_user.jpg}" alt="Default User Photo">
+
+    <h1 th:text="${user.username}">Username</h1>
+    <p th:text="${user.email}">user@example.com</p>
+  </div>
+
+  <form th:action="@{/edit/own/{id}(id=${user.user_id})}" method="post">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input type="text" id="username" name="username" th:value="${user.username}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" th:value="${user.email}" required>
+    </div>
+
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" th:value="${user.password}" required>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">Save</button>
+      <button type="button" class="logout-button" onclick="window.location.href='/logout'">Logout</button>
+    </div>
+  </form>
+
+  <!-- Кнопка "Back" по центру -->
+  <div class="container">
+    <form th:action="@{/main_page/{username}(username=${user.username})}" method="get" style="display:inline;">
+      <button type="submit" class="button">Back</button>
+    </form>
+  </div>
+
+  <!-- Кнопка для загрузки фото, выровненная по левому краю -->
+  <div class="upload-button-container">
+    <form th:action="@{/upload/photo/{user_id}(user_id=${user.user_id})}" method="post" enctype="multipart/form-data">
+      <div class="form-group">
+        <input type="file" id="photo" name="photo" accept="image/*" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit">Upload</button>
+      </div>
+    </form>
+  </div>
+</div>
+</body>
+</html>

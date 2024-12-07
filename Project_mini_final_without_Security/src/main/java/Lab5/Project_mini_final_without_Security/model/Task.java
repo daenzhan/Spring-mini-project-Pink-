@@ -25,13 +25,17 @@ public class Task {
     @DBRef
     private User user;
 
-    @DBRef(lazy = false)
+    @DBRef
+    private Category category;
+
     private ObjectId category_id;
+    private String category_name;
 
     public Task() {}
 
     public Task(ObjectId task_id, String title, String description, LocalDateTime due_date,
-                String status, String priority, ObjectId user_id, User user, ObjectId category_id) {
+                String status, String priority, ObjectId user_id, User user, ObjectId category_id,
+                Category category, String category_name) {
         this.task_id = task_id;
         this.title = title;
         this.description = description;
@@ -41,6 +45,8 @@ public class Task {
         this.user_id = user_id;
         this.user = user;
         this.category_id = category_id;
+        this.category = category;
+        this.category_name = category_name;
     }
 
     public ObjectId getTask_id() {
@@ -121,5 +127,21 @@ public class Task {
 
     public void setFormattedDueDate(String formattedDueDate) {
         this.formattedDueDate = formattedDueDate;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+
+    public String getCategory_name() {
+        return category_name;
+    }
+
+    public void setCategory_name(String category_name) {
+        this.category_name = category_name;
     }
 }

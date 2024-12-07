@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .and()
                 .formLogin()
                 .loginPage("/login")
-                .defaultSuccessUrl("/main_page", true) // Generic page; dynamic redirection handled in Controller
+                .defaultSuccessUrl("/main_page", true)
                 .permitAll()
                 .and()
                 .logout()
@@ -56,6 +56,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
 }
 
 

@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 import java.math.BigInteger;
 
 @Repository
-public interface CategoryRepository extends MongoRepository<Category, BigInteger> {
+public interface CategoryRepository extends MongoRepository<Category, ObjectId> {
 }
