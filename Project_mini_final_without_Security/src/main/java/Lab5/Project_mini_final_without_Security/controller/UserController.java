@@ -117,26 +117,7 @@ public class UserController {
         }
     }
 
-
-//    @GetMapping("/login")
-//    public String showLoginForm(Model model) {
-//        return "login";
-//    }
-//
-//    @PostMapping("/login")
-//    public String login(@RequestParam("username") String username,
-//                        @RequestParam("password") String password, Model model, HttpSession session) {
-//        Optional<User> user = userRepository.findByUsername(username);
-//        if (user.isPresent() && password_end.matches(password, user.get().getPassword())) {
-//            User u = user.get();
-//            session.setAttribute("user", u);
-//            return "redirect:/main_page";
-//        } else {
-//            model.addAttribute("error", "неверный логин или пароль!");
-//            return "login";
-//        }
-//    }
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     //     LOGOUT
     @GetMapping("/logout")
@@ -145,17 +126,7 @@ public class UserController {
         return "redirect:/login";
     }
 
-
-//    @PostMapping("/login")
-//    public String login(@RequestParam String username, @RequestParam String password, Model model) {
-//        User user = userRepository.findByUsername(username).orElse(null);
-//        if (user != null && user.getPassword().equals(password)) {
-//            return "redirect:/main_page";
-//        }
-//        model.addAttribute("error", "Invalid username or password.");
-//        return "login";
-//    }
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // USER LIST - SHOW
     @GetMapping("/users/show/{username_}")
@@ -177,6 +148,7 @@ public class UserController {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // UPDATE - PUTMAPPING
     @GetMapping("/edit/{user_id}/{username_}")
@@ -210,6 +182,7 @@ public class UserController {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // UPDATE - PUTMAPPING
     @GetMapping("/edit/own/{user_id}")
@@ -241,6 +214,7 @@ public class UserController {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // DELETE
     @GetMapping("/delete/{user_id}/{username_}")
@@ -263,7 +237,6 @@ public class UserController {
                                @RequestParam(value = "page", defaultValue = "0") int page,
                                @RequestParam(value = "size", defaultValue = "3") int size,
                                @RequestParam(value = "search", required = false) String search,
-                               @RequestParam(value = "status", required = false) String status,
                                Model model) {
         Optional<User> user_db = userRepository.findById(user_id);
 
@@ -276,17 +249,9 @@ public class UserController {
         Page<Task> tasksPage = null;
 
 
-        if (search != null && status != null && !status.isEmpty()) {
-            // Filter by both search term and status
-            tasksList = taskRepository.findByUser_idAndTitleContainingAndStatus(user_id, search, status);
-        } else if (search != null) {
-            // Filter by search term only
+        if (search != null) {
             tasksList = taskRepository.findByUser_idAndTitleContaining(user_id, search);
-        } else if (status != null && !status.isEmpty()) {
-            // Filter by status only
-            tasksList = taskRepository.findByUser_idAndStatus(user_id, status);
         } else {
-            // No filters applied, fetch tasks with pagination
             tasksPage = taskRepository.findByUserId_(user_id, PageRequest.of(page, size));
             tasksList = tasksPage.getContent();
         }
@@ -302,21 +267,18 @@ public class UserController {
             task.setFormattedDueDate(formattedDate);
         }
 
+
         model.addAttribute("user", user);
         model.addAttribute("tasks", tasksList);
         model.addAttribute("current_page", page);
         model.addAttribute("total_pages", tasksPage != null ? tasksPage.getTotalPages() : 1);
         model.addAttribute("total_tasks", tasksPage != null ? tasksPage.getTotalElements() : tasksList.size());
         model.addAttribute("search", search);
-        model.addAttribute("status", status); // Add the selected status to the model
 
         return "user-tasks";
     }
 
-
-
-
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // CREATE TASK - POST
     @GetMapping("/tasks/create/{user_id}")
@@ -370,11 +332,7 @@ public class UserController {
         return "redirect:/tasks/show/" + user_id;
     }
 
-
-
-
-
-
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // UPDATE TASK - PUTMAPPING
     @GetMapping("/tasks/edit/{task_id}")
@@ -424,6 +382,7 @@ public class UserController {
         return "redirect:/tasks/show/" + t.getUser_id();
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // DELETE TASKS
     @GetMapping("/tasks/delete/{task_id}")
@@ -434,6 +393,7 @@ public class UserController {
         return "redirect:/tasks/show/" + t.getUser_id();
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     // COMPLETE TASKS
     @PostMapping("/tasks/complete/{task_id}")

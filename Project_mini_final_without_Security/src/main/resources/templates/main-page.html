@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main Page</title>
+    <title>main_page</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,11 +11,12 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f0f0f0;
             margin: 0;
             flex-direction: column;
             padding: 20px;
             box-sizing: border-box;
+            background: radial-gradient(circle, #e91e63 0%, #f8bbd0 60%, #ffffff 100%);
+            color: #333;
         }
 
         header {
@@ -63,7 +64,7 @@
         .button, .tasks-button {
             background-color: #f8bbd0;
             border: none;
-            color: white;
+            color: #e91e63 ;
             padding: 20px 40px;
             font-size: 20px;
             cursor: pointer;
@@ -137,21 +138,21 @@
 <header>
 
     <form th:action="@{/show/profile/{user_id}(user_id=${user.user_id})}" method="get" style="margin: 0;">
-        <button type="submit" class="profile-button">Profile</button>
+        <button type="submit" class="profile-button">profile</button>
     </form>
 </header>
 
 
-<h1 style="color: #e91e63;">Welcome, <span th:text="${user.username}">Username</span>!</h1>
+<h1 style="color: white;">Welcome, <span th:text="${user.username}">Username</span>!</h1>
 <div class="container">
     <form th:if="${user.role == 'ADMIN'}" th:action="@{/users/show/{username}(username=${user.username})}" method="get" style="display:inline;">
-        <button type="submit" class="tasks-button">Users</button>
+        <button type="submit" class="tasks-button">users</button>
     </form>
 
-    <button class="button" onclick="window.location.href='/categories'">Categories</button>
+    <button class="button" onclick="window.location.href='/categories'">categories</button>
 
     <form th:action="@{/tasks/show/{id}(id=${user.user_id})}" method="get" style="display:inline;">
-        <button type="submit" class="tasks-button">Tasks</button>
+        <button type="submit" class="tasks-button">tasks</button>
     </form>
 </div>
 

@@ -79,42 +79,42 @@
 </head>
 <body>
 <div class="container">
-  <h1>Edit</h1>
+  <h1>EDIT</h1>
   <form th:action="@{'/tasks/edit/' + ${task.task_id}}" method="post">
-    <label for="title">Title:</label>
+    <label for="title">title:</label>
     <input type="text" id="title" name="title" th:value="${task.title}" required/>
 
-    <label for="description">Description:</label>
+    <label for="description">description:</label>
     <input type="text" id="description" name="description" th:value="${task.description}" required/>
 
-    <label for="formattedDueDate">Due Date:</label>
+    <label for="formattedDueDate">due_date:</label>
     <input type="date" id="formattedDueDate" name="formattedDueDate" th:value="${task.formattedDueDate}" required/>
 
-    <label for="status">Status:</label>
+    <label for="status">status:</label>
     <select id="status" name="status" required>
       <option value="PENDING" th:selected="${task.status == 'PENDING'}">Pending</option>
       <option value="IN_PROGRESS" th:selected="${task.status == 'IN_PROGRESS'}">In Progress</option>
       <option value="COMPLETED" th:selected="${task.status == 'COMPLETED'}">Completed</option>
     </select>
 
-    <label for="priority">Priority:</label>
+    <label for="priority">priority:</label>
     <select id="priority" name="priority" required>
       <option value="LOW" th:selected="${task.priority == 'LOW'}">Low</option>
       <option value="MEDIUM" th:selected="${task.priority == 'MEDIUM'}">Medium</option>
       <option value="HIGH" th:selected="${task.priority == 'HIGH'}">High</option>
     </select>
 
-    <label for="category">Category:</label>
+    <label for="category">category:</label>
     <select id="category" name="category_name" required>
       <th:block th:each="category : ${categories}">
         <option th:value="${category.name}" th:text="${category.name}"></option>
       </th:block>
     </select>
 
-    <button type="submit">Update</button>
+    <button type="submit">update</button>
   </form>
 
-  <a href="/tasks/show" th:href="@{'/tasks/show/' + ${task.user_id}}">Back to Task List</a>
+  <a href="/tasks/show" th:href="@{'/tasks/show/' + ${task.user_id}}">back</a>
 </div>
 </body>
 </html>

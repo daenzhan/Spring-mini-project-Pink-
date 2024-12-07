@@ -103,41 +103,41 @@
 </head>
 <body>
 <div class="container">
-    <h1>Create</h1>
+    <h1>CREATE</h1>
     <form th:action="@{'/tasks/create/' + ${user_id}}" method="post">
-        <label for="title">Title:</label>
+        <label for="title">title:</label>
         <input type="text" id="title" name="title" placeholder="Enter task title" required />
 
-        <label for="description">Description:</label>
+        <label for="description">description:</label>
         <input type="text" id="description" name="description" placeholder="Enter task description" required />
 
-        <label for="dueDate">Due Date:</label>
+        <label for="dueDate">due_date:</label>
         <input type="date" id="dueDate" name="dueDate" required />
 
-        <label for="status">Status:</label>
+        <label for="status">status:</label>
         <select id="status" name="status" required>
             <option value="PENDING">Pending</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="COMPLETED">Completed</option>
         </select>
 
-        <label for="priority">Priority:</label>
+        <label for="priority">priority:</label>
         <select id="priority" name="priority" required>
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
+            <option value="LOW">low</option>
+            <option value="MEDIUM">medium</option>
+            <option value="HIGH">high</option>
         </select>
 
-        <label for="category">Category:</label>
+        <label for="category">category:</label>
         <select id="category" name="category_id" required>
             <th:block th:each="category : ${categories}">
                 <option th:value="${category.category_id}" th:text="${category.name}"></option>
             </th:block>
         </select>
 
-        <button type="submit">Submit</button>
+        <button type="submit">submit</button>
     </form>
-    <a href="/tasks/show" th:href="@{'/tasks/show/' + ${user_id}}">Back to Task List</a>
+    <a href="/tasks/show" th:href="@{'/tasks/show/' + ${user_id}}">back</a>
 </div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Tasks of User</title>
+  <title>tasks</title>
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -221,16 +221,19 @@
 
 <!--<h1>Tasks for User: <span th:text="${user.username}"></span></h1>-->
 
+<h1>TASKS</h1>
+
+
 <div class="search-container">
   <form th:action="@{/tasks/show/{user_id}(user_id=${user.user_id})}" method="get" style="display:flex; flex-wrap: wrap; width: 100%;">
     <input type="text" id="search" name="search" th:value="${search}" placeholder="Search tasks..." />
     <select name="status" th:value="${status}">
-      <option value="">All Statuses</option>
+      <option value="">all</option>
       <option value="PENDING">PENDING</option>
       <option value="IN_PROGRESS">IN_PROGRESS</option>
       <option value="COMPLETED">COMPLETED</option>
     </select>
-    <button type="submit">Search</button>
+    <button type="submit">search</button>
   </form>
 </div>
 
@@ -243,33 +246,33 @@
   <table>
     <thead>
     <tr>
-      <th>Title</th>
-      <th>Description</th>
-      <th>Due Date</th>
-      <th>Status</th>
-      <th>Priority</th>
-      <th>Category</th>
-      <th>Actions</th>
+      <th>title</th>
+      <th>description</th>
+      <th>due_date</th>
+      <th>status</th>
+      <th>priority</th>
+      <th>category</th>
+      <th>actions</th>
     </tr>
     </thead>
     <tbody>
     <tr th:each="task : ${tasks}">
-      <td th:text="${task.title}">Title</td>
-      <td th:text="${task.description}">Description</td>
-      <td th:text="${task.formattedDueDate}">Due Date</td>
-      <td th:text="${task.status}">Status</td>
-      <td th:text="${task.priority}">Priority</td>
-      <td th:text="${task.category_name}">Category</td>
+      <td th:text="${task.title}">title</td>
+      <td th:text="${task.description}">description</td>
+      <td th:text="${task.formattedDueDate}">due_date</td>
+      <td th:text="${task.status}">status</td>
+      <td th:text="${task.priority}">priority</td>
+      <td th:text="${task.category_name}">category</td>
       <td>
         <form th:action="@{/tasks/edit/{id}(id=${task.task_id})}" method="get" style="display:inline;">
-          <button type="submit" class="action-button edit-button">Edit</button>
+          <button type="submit" class="action-button edit-button">edit</button>
         </form>
         <form th:action="@{/tasks/delete/{id}(id=${task.task_id})}" method="get" style="display:inline;">
-          <button type="submit" class="action-button delete-button">Delete</button>
+          <button type="submit" class="action-button delete-button">delete</button>
         </form>
 
         <form th:action="@{/tasks/complete/{id}(id=${task.task_id})}" method="post" style="display:inline;">
-          <button type="submit" class="action-button" style="background-color: #2196F3; color: white;">Complete</button>
+          <button type="submit" class="action-button" style="background-color: #2196F3; color: white;">complete</button>
         </form>
       </td>
     </tr>
@@ -292,11 +295,11 @@
 
 <div class="top-controls">
   <form th:action="@{/main_page/{username}(username=${user.username})}" method="get">
-    <button class="button create-button" type="submit">Back</button>
+    <button class="button create-button" type="submit">back</button>
   </form>
 
   <form th:action="@{/tasks/create/{user_id}(user_id=${user.user_id})}" method="get">
-    <button class="button create-button" type="submit">Create</button>
+    <button class="button create-button" type="submit">create</button>
   </form>
 </div>
 </body>

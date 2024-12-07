@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Login</title>
+    <title>login</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -100,19 +100,19 @@
 </head>
 <body>
 <div class="container">
-    <h1>Login</h1>
+    <h1>LOGIN</h1>
     <form th:action="@{/login}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
 
-        <label for="username">Username:</label>
+        <label for="username">username:</label>
         <input type="text" id="username" name="username" required />
 
-        <label for="password">Password:</label>
+        <label for="password">password:</label>
         <input type="password" id="password" name="password" required />
 
-        <button type="submit">Login</button>
+        <button type="submit">login</button>
     </form>
-    <a href="/register">Don't have an account? Register</a>
+    <a href="/register">don't have an account? register!</a>
 </div>
 </body>
 </html>

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Create Category</title>
+    <title>create_category</title>
     <style>
         /* Общие стили */
         body {
@@ -108,19 +108,19 @@
 </head>
 <body>
 
-<h1>Create New Category</h1>
+<h1>CREATE</h1>
 
 <div class="form-container">
     <form th:action="@{/create/category}" method="post">
-        <label for="name">Category Name</label>
+        <label for="name">name:</label>
         <input type="text" id="name" name="name" th:value="${category.name}" placeholder="Enter category name" required />
 
-        <label for="description">Category Description</label>
+        <label for="description">description</label>
         <input type="text" id="description" name="description" th:value="${category.description}" placeholder="Enter category description" required />
 
-        <button type="submit" class="button">Create</button>
+        <button type="submit" class="button">create</button>
 
-        <a href="/categories" class="back-button">Back to Categories</a>
+        <a href="/categories" class="back-button">back</a>
     </form>
 </div>
 

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Category List</title>
+  <title>category_list</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -135,7 +135,7 @@
 </head>
 <body>
 
-<h1>Category List</h1>
+<h1>CATEGORIES</h1>
 
 <div th:if="${#lists.isEmpty(categories)}" class="no-users">
   <p>No categories found.</p>
@@ -144,9 +144,9 @@
 <table th:if="${!#lists.isEmpty(categories)}">
   <thead>
   <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Description</th>
+    <th>id</th>
+    <th>name</th>
+    <th>description</th>
   </tr>
   </thead>
   <tbody>
@@ -160,10 +160,10 @@
 
 <!-- Контейнер для кнопок -->
 <div class="button-container">
-  <button class="button" onclick="window.location.href='http://localhost:8080/main_page'">Menu</button>
+  <button class="button" onclick="window.location.href='http://localhost:8080/main_page'">menu</button>
 
   <form th:action="@{/create/category}" method="get" style="display:inline;">
-    <button type="submit" class="button">Create</button>
+    <button type="submit" class="button">create</button>
   </form>
 </div>
 
