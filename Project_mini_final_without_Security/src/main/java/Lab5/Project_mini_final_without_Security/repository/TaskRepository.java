@@ -21,6 +21,11 @@ public interface TaskRepository extends MongoRepository <Task,ObjectId>  {
     @Query("{'user_id': ?0}")
     Page<Task> findByUserId_(ObjectId userId, Pageable pageable);
 
+    @Query("{ 'user_id' : ?0, 'title' : { $regex: ?1, $options: 'i' }, 'status' : ?2 }")
+    List<Task> findByUser_idAndTitleContainingAndStatus(ObjectId user_id, String title, String status);
+
+    @Query("{ 'user_id' : ?0, 'status' : ?1 }")
+    List<Task> findByUser_idAndStatus(ObjectId user_id, String status);
 
 
 }

@@ -263,6 +263,7 @@ public class UserController {
                                @RequestParam(value = "page", defaultValue = "0") int page,
                                @RequestParam(value = "size", defaultValue = "3") int size,
                                @RequestParam(value = "search", required = false) String search,
+                               @RequestParam(value = "status", required = false) String status,
                                Model model) {
         Optional<User> user_db = userRepository.findById(user_id);
 
@@ -275,9 +276,17 @@ public class UserController {
         Page<Task> tasksPage = null;
 
 
-        if (search != null) {
+        if (search != null && status != null && !status.isEmpty()) {
+            // Filter by both search term and status
+            tasksList = taskRepository.findByUser_idAndTitleContainingAndStatus(user_id, search, status);
+        } else if (search != null) {
+            // Filter by search term only
             tasksList = taskRepository.findByUser_idAndTitleContaining(user_id, search);
+        } else if (status != null && !status.isEmpty()) {
+            // Filter by status only
+            tasksList = taskRepository.findByUser_idAndStatus(user_id, status);
         } else {
+            // No filters applied, fetch tasks with pagination
             tasksPage = taskRepository.findByUserId_(user_id, PageRequest.of(page, size));
             tasksList = tasksPage.getContent();
         }
@@ -293,13 +302,13 @@ public class UserController {
             task.setFormattedDueDate(formattedDate);
         }
 
-
         model.addAttribute("user", user);
         model.addAttribute("tasks", tasksList);
         model.addAttribute("current_page", page);
         model.addAttribute("total_pages", tasksPage != null ? tasksPage.getTotalPages() : 1);
         model.addAttribute("total_tasks", tasksPage != null ? tasksPage.getTotalElements() : tasksList.size());
         model.addAttribute("search", search);
+        model.addAttribute("status", status); // Add the selected status to the model
 
         return "user-tasks";
     }

@@ -224,6 +224,12 @@
 <div class="search-container">
   <form th:action="@{/tasks/show/{user_id}(user_id=${user.user_id})}" method="get" style="display:flex; flex-wrap: wrap; width: 100%;">
     <input type="text" id="search" name="search" th:value="${search}" placeholder="Search tasks..." />
+    <select name="status" th:value="${status}">
+      <option value="">All Statuses</option>
+      <option value="PENDING">PENDING</option>
+      <option value="IN_PROGRESS">IN_PROGRESS</option>
+      <option value="COMPLETED">COMPLETED</option>
+    </select>
     <button type="submit">Search</button>
   </form>
 </div>
