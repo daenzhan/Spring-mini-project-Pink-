@@ -237,7 +237,7 @@ public class UserController {
                                @RequestParam(value = "page", defaultValue = "0") int page,
                                @RequestParam(value = "size", defaultValue = "3") int size,
                                @RequestParam(value = "search", required = false) String search,
-                               @RequestParam(value = "status", required = false) String status, // New status parameter
+                               @RequestParam(value = "status", required = false) String status,
                                Model model) {
         Optional<User> user_db = userRepository.findById(user_id);
 
@@ -313,13 +313,13 @@ public class UserController {
     ) {
         Optional<User> user = userRepository.findById(user_id);
         if (user.isEmpty()) {
-            model.addAttribute("error", "Пользователь не найден!");
+            model.addAttribute("error", "пользователь не найден!");
             return "error";
         }
         LocalDateTime dueDateTime = dueDate.atStartOfDay();
         Optional<Category> category = categoryRepository.findById(category_id);
         if (category.isEmpty()) {
-            model.addAttribute("error", "задача не найдена!");
+            model.addAttribute("error", "категория не найдена!");
             return "error";
         }
 
