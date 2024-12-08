@@ -237,6 +237,7 @@ public class UserController {
                                @RequestParam(value = "page", defaultValue = "0") int page,
                                @RequestParam(value = "size", defaultValue = "3") int size,
                                @RequestParam(value = "search", required = false) String search,
+                               @RequestParam(value = "status", required = false) String status, // New status parameter
                                Model model) {
         Optional<User> user_db = userRepository.findById(user_id);
 
@@ -245,38 +246,42 @@ public class UserController {
             return "error";
         }
         User user = user_db.get();
-        List<Task> tasksList;
-        Page<Task> tasksPage = null;
+        List<Task> tasks;
+        Page<Task> tasks_page = null;
 
-
-        if (search != null) {
-            tasksList = taskRepository.findByUser_idAndTitleContaining(user_id, search);
+        if (search != null && status != null && !status.isEmpty()) {
+            tasks = taskRepository.findByUser_idAndTitleContainingAndStatus(user_id, search, status);
+        } else if (search != null) {
+            tasks = taskRepository.findByUser_idAndTitleContaining(user_id, search);
+        } else if (status != null && !status.isEmpty()) {
+            tasks = taskRepository.findByUser_idAndStatus(user_id, status);
         } else {
-            tasksPage = taskRepository.findByUserId_(user_id, PageRequest.of(page, size));
-            tasksList = tasksPage.getContent();
+            tasks_page = taskRepository.findByUserId_(user_id, PageRequest.of(page, size));
+            tasks = tasks_page.getContent();
         }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        for (Task task : tasksList) {
+        for (Task t : tasks) {
             String formattedDate;
-            if (task.getDue_date() != null) {
-                formattedDate = task.getDue_date().format(formatter);
+            if (t.getDue_date() != null) {
+                formattedDate = t.getDue_date().format(formatter);
             } else {
                 formattedDate = "N/A";
             }
-            task.setFormattedDueDate(formattedDate);
+            t.setFormattedDueDate(formattedDate);
         }
 
-
         model.addAttribute("user", user);
-        model.addAttribute("tasks", tasksList);
+        model.addAttribute("tasks", tasks);
         model.addAttribute("current_page", page);
-        model.addAttribute("total_pages", tasksPage != null ? tasksPage.getTotalPages() : 1);
-        model.addAttribute("total_tasks", tasksPage != null ? tasksPage.getTotalElements() : tasksList.size());
+        model.addAttribute("total_pages", tasks_page != null ? tasks_page.getTotalPages() : 1);
+        model.addAttribute("total_tasks", tasks_page != null ? tasks_page.getTotalElements() : tasks.size());
         model.addAttribute("search", search);
+        model.addAttribute("status", status);
 
         return "user-tasks";
     }
+
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
 
